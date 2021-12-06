@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="dist/css/style.css">
+  <title>UK Bank Holidays 2018 / 19</title>
+</head>
+<body>
+  <h1>
+    <img src="img/ukflag.png" alt="">
+    Upcoming UK Bank Holidays
+    <img src="img/ukflag.png" alt="">
+  </h1>
+  <ul id='holidays'></ul>
+
+      <script type="text/javascript">
+
+        const endpoint = 'https://www.gov.uk/bank-holidays.json';
+        const ul = document.getElementById('holidays')
+                    
+        fetch(endpoint)
+          .then(blob => blob.json())
+          .then(data => handleDates(data));
+
+          function handleDates(data) {
+            let bankHolidays = data;
+            let england = bankHolidays["england-and-wales"].events;
+            const now = new Date();
+            const thisMonth = now.getUTCMonth() + 1; //months from 1-12
+            const thisDay = now.getUTCDate();
+            const thisYear = now.getUTCFullYear();
+            const thisDate = thisYear + '-' +thisMonth + '-' +thisDay;
+            const html = england.map((items)=>{
+              const [year, month, date] = items.date.split("-");
+              
+              if(Date.parse(thisDate) <= Date.parse(items.date)){
+                return `
+              <li>${items.title} <br/> <span class='yellow'>(${date} / ${month} / ${year})</span>  </li>
+              `;
+              }
+            
+            }).join('');
+          ul.innerHTML = html;
+        }
+
+      </script>
+</body>
+</html>
